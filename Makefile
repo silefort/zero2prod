@@ -26,14 +26,18 @@ test:
 	
 .PHONY: format ## Format and Lint Code
 format:
+	rustup component add rustfmt
+	rustup component add clippy
 	cargo fmt --check
 	cargo clippy -- -D warnings
 
 .PHONY: coverage ## Code Coverage
 coverage:
+	cargo install cargo-tarpaulin
 	cargo tarpaulin --ignore-tests
 
 .PHONY: security ## Security Audit
 security:
+	cargo install cargo-audit
 	cargo audit
 
