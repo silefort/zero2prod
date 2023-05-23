@@ -1,7 +1,6 @@
 # This is an auto documented Makefile. For more information see the following article
 # @see http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 
-
 .DEFAULT_GOAL := help
 
 .PHONY: help
@@ -15,6 +14,7 @@ setup:
 	rustup component add clippy
 	rustup component add rustfmt
 	cargo install cargo-audit
+	cargo install cargo-edit
 
 .PHONY: dev ## Launch the Development loop ( check / test / run)
 dev:
@@ -40,4 +40,3 @@ coverage:
 security:
 	cargo install cargo-audit
 	cargo audit
-
