@@ -17,6 +17,7 @@ name = "zero2prod"
 
 [dependencies]
 actix-web = "4.3.1"
+urlencoding = "2.1"
 
 # Dependencies needed only during the development phase
 [dev-dependencies]

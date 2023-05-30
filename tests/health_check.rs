@@ -27,14 +27,28 @@ async fn health_check_works() {
     assert_eq!(Some(0), response.content_length());
 }
 
-// Launch our application in the background - somehow -
-fn spawn_app() -> String {
-    let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind random port");
-    // We retrieve the port assigned to us by the OS
-    let port = listener.local_addr().unwrap().port();
-    let server = zero2prod::run(listener).expect("Failed to bind address");
-    let _ = actix_web::rt::spawn(server);
+#[actix_web::test]
+async fn subscribe_endpoint_should_return_200_when_mail_and_name_correctly_entered() {
+    // Given
+    let app_address = spawn_app();
+    // We need to bring in `reqwest`
+    // to perform HTTP requests against our application
+    let client = reqwest::Client::new();
+    let user_email_address = "paul.bismuth@yopmail.com";
+    let user_name = "paul";
 
-    // We return the application address to the caller!
-    format!("http://127.0.0.1:{}", port)
+    // When
+    let body = encode(&(format!("name={}&email={}", user_name, user_email_address))).into_owned();
+    println!("{}",body);
+    //let body = "name%3Dpaul%40email%3Dpaul.bismuth%40yopmail.com";
+    let response = client
+        .post(&format!("{}/subscriptions", &app_address))
+        .header("Content-Type","application/x-www-form-urlencoded")
+        .body(body)
+        .send()
+        .await
+        .expect("Failed to execute request.");
+
+    // Then
+    assert!(response.status().is_success());
 }
