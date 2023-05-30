@@ -9,8 +9,19 @@ async fn health_check() -> impl Responder {
     HttpResponse::Ok()
 }
 
+#[post("/subscriptions")]
+async fn subscriptions() -> impl Responder {
+    HttpResponse::Ok()
+}
+
+// rustfmt::skip make sur `cargo fmt`skip this function
+#[rustfmt::skip]
 pub fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
-    let server = HttpServer::new(|| App::new().service(health_check))
+    let server = HttpServer::new(|| {
+        App::new()
+            .service(health_check)
+            .service(subscriptions)
+        })
         .listen(listener)?
         .run();
 
