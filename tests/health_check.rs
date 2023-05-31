@@ -64,5 +64,29 @@ async fn subscribe_endpoint_should_return_200_when_mail_and_name_correctly_enter
         .expect("Failed to execute request.");
 
     // Then
-    assert!(response.status().is_success());
+    assert_eq!(response.status(), actix_web::http::StatusCode::OK);
+}
+
+#[actix_web::test]
+async fn subscribe_endpoint_should_return_400_when_name_is_missing() {
+    // Given
+    let app_address = spawn_app();
+    // We need to bring in `reqwest`
+    // to perform HTTP requests against our application
+    let client = reqwest::Client::new();
+    let user_email_address = "paul.bismuth@yopmail.com";
+    let user_name = "";
+
+    // When
+    let body = encode(&(format!("name={}&email={}", user_name, user_email_address))).into_owned();
+    let response = client
+        .post(&format!("{}/subscriptions", &app_address))
+        .header("Content-Type","application/x-www-form-urlencoded")
+        .body(body)
+        .send()
+        .await
+        .expect("Failed to execute request.");
+
+    // Then
+    assert_eq!(response.status(), actix_web::http::StatusCode::BAD_REQUEST, "The API did not fail with 400 Bad Request when name is missing");
 }
